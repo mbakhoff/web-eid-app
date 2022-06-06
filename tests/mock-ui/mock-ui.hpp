@@ -24,6 +24,8 @@
 
 #include "ui.hpp"
 
+#include <QCoreApplication>
+
 class MockUI : public WebEidUI
 {
     Q_OBJECT
@@ -60,6 +62,7 @@ public: // slots
     void onSmartCardStatusUpdate(const RetriableError) override
     {
         emit rejected();
+        QCoreApplication::processEvents();
         // Schedule invoking Controller::exit().
         emit destroyed();
     }
