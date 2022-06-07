@@ -31,8 +31,8 @@
 <?endif ?>
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Name="Web eID software" UpgradeCode="4f0e0fef-0dbc-481b-9d81-08921740f781"
-      Id="*" Language="1033" Version="$(var.MSI_VERSION)" Codepage="1251" Manufacturer="RIA">
+  <Product Name="HIA batch signing" UpgradeCode="4f0e0fef-0dbc-481b-9d81-08921740f782"
+      Id="*" Language="1033" Version="$(var.MSI_VERSION)" Codepage="1251" Manufacturer="HIA,RIA">
     <Package Platform="$(var.Platform)" Keywords="Installer" InstallerVersion="405" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated"/>
     <MediaTemplate EmbedCab="yes" CompressionLevel="high"/>
     <Icon Id="web_eid.exe" SourceFile="$(var.app_path)"/>
@@ -79,8 +79,8 @@
 
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="$(var.PlatformProgramFilesFolder)">
-        <Directory Id="APPLICATIONFOLDER" Name="Web eID">
-          <Component Id="Application" Guid="9b61583c-308f-435d-b221-c2f250271c7c">
+        <Directory Id="APPLICATIONFOLDER" Name="HIA batch signing">
+          <Component Id="Application" Guid="9b61583c-308f-435d-b221-c2f250271c7d">
             <File Source="$(var.app_path)" KeyPath="yes"/>
 <?ifdef var.qt_path ?>
             <File Source="$(var.VCPATH)\msvcp140$(var.qt_suffix).dll"/>
@@ -104,14 +104,14 @@
           <Component Id="ChromeEdge" Transitive="yes">
             <Condition><![CDATA[(CHROMEINSTALL = 1 OR EDGEINSTALL = 1)]]></Condition>
             <File Source="$(var.json)"/>
-            <RegistryValue Root="HKLM" Type="string" Value="[APPLICATIONFOLDER]eu.webeid.json"
-              Key="SOFTWARE\Google\Chrome\NativeMessagingHosts\eu.webeid"/>
+            <RegistryValue Root="HKLM" Type="string" Value="[APPLICATIONFOLDER]eu.webeid.batch.json"
+              Key="SOFTWARE\Google\Chrome\NativeMessagingHosts\eu.webeid.batch"/>
           </Component>
           <Component Id="Firefox" Transitive="yes">
             <Condition><![CDATA[(FIREFOXINSTALL = 1)]]></Condition>
             <File Source="$(var.jsonfirefox)"/>
-            <RegistryValue Root="HKLM" Type="string" Value="[APPLICATIONFOLDER]eu.webeid.firefox.json"
-              Key="SOFTWARE\Mozilla\NativeMessagingHosts\eu.webeid" />
+            <RegistryValue Root="HKLM" Type="string" Value="[APPLICATIONFOLDER]eu.webeid.batch.firefox.json"
+              Key="SOFTWARE\Mozilla\NativeMessagingHosts\eu.webeid.batch" />
           </Component>
 <?ifdef var.qt_path ?>
           <Directory Id="platforms" Name="platforms" FileSource="$(var.qt_path)\plugins\platforms">
@@ -135,36 +135,24 @@
       <Component Id="Chrome" Win64="no" Transitive="yes">
         <Condition><![CDATA[(CHROMEINSTALL = 1)]]></Condition>
         <RegistryValue Root="HKLM" Type="string" Name="update_url"
-          Key="SOFTWARE\Google\Chrome\Extensions\ncibgoaomkmdpilpocfeponihegamlic"
+          Key="SOFTWARE\Google\Chrome\Extensions\adgngflncndhggolkdfiggnbhpdenfhg"
           Value="https://clients2.google.com/service/update2/crx"/>
       </Component>
       <Component Id="ChromePolicy" Win64="no" Transitive="yes">
         <Condition><![CDATA[(CHROMEINSTALL = 1 AND CHROMEPOLICY = 1)]]></Condition>
         <RegistryValue Root='HKLM' Type='string' Name="56790"
             Key='SOFTWARE\Policies\Google\Chrome\ExtensionInstallForcelist'
-            Value='ncibgoaomkmdpilpocfeponihegamlic'/>
-      </Component>
-      <Component Id="Edge" Win64="no" Transitive="yes">
-        <Condition><![CDATA[(EDGEINSTALL = 1)]]></Condition>
-        <RegistryValue Root="HKLM" Type="string" Name="update_url"
-          Key="SOFTWARE\Microsoft\Edge\Extensions\gnmckgbandlkacikdndelhfghdejfido"
-          Value="https://edge.microsoft.com/extensionwebstorebase/v1/crx"/>
-      </Component>
-      <Component Id="EdgePolicy" Win64="no" Transitive="yes">
-        <Condition><![CDATA[(EDGEINSTALL = 1 AND EDGEPOLICY = 1)]]></Condition>
-        <RegistryValue Root='HKLM' Type='string' Name="56790"
-            Key='SOFTWARE\Policies\Microsoft\Edge\ExtensionInstallForcelist'
-            Value='gnmckgbandlkacikdndelhfghdejfido'/>
+            Value='adgngflncndhggolkdfiggnbhpdenfhg'/>
       </Component>
     </Directory>
 
-    <Feature Id="Install" Level="1" Title="Web eID" Display="expand" ConfigurableDirectory="APPLICATIONFOLDER">
+    <Feature Id="Install" Level="1" Title="HIA batch signing" Display="expand" ConfigurableDirectory="APPLICATIONFOLDER">
       <ComponentRef Id="Application"/>
       <ComponentRef Id="ChromeEdge"/>
       <ComponentRef Id="Chrome"/>
       <ComponentRef Id="ChromePolicy"/>
-      <ComponentRef Id="Edge"/>
-      <ComponentRef Id="EdgePolicy"/>
+<!--      <ComponentRef Id="Edge"/>-->
+<!--      <ComponentRef Id="EdgePolicy"/>-->
       <ComponentRef Id="Firefox"/>
 <?ifdef var.qt_path ?>
       <ComponentRef Id="qwindows.dll" />

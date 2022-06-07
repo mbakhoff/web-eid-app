@@ -2,7 +2,7 @@
 set -e
 
 mkdir -p /etc/opt/chrome/native-messaging-hosts
-ln -sf /usr/share/web-eid/eu.webeid.json \
-	/etc/opt/chrome/native-messaging-hosts/eu.webeid.json
+ln -sf /usr/share/web-eid/eu.webeid.batch.json \
+	/etc/opt/chrome/native-messaging-hosts/eu.webeid.batch.json
 
 #DEBHELPER#

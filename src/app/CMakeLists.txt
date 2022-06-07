@@ -21,8 +21,11 @@ if(WIN32)
         set(PLATFORM x86)
     endif()
     find_package(OpenSSL REQUIRED)
-    get_filename_component(SSL_PATH "${OPENSSL_CRYPTO_LIBRARY}" DIRECTORY)
-    get_filename_component(SSL_PATH "${SSL_PATH}/../bin" ABSOLUTE)
+    if(OPENSSL_ROOT_DIR)
+        set(SSL_PATH "${OPENSSL_ROOT_DIR}/bin")
+    else()
+        get_filename_component(SSL_PATH "${OPENSSL_INCLUDE_DIR}/../bin" ABSOLUTE)
+    endif()
     set(WEBEID_PATH web-eid.exe)
     set(BASE_FILE $<TARGET_NAME:web-eid>_${PROJECT_VERSION})
     set(MSI_FILE ${BASE_FILE}.${PLATFORM})
@@ -31,8 +34,8 @@ if(WIN32)
         -dPlatform=${PLATFORM}
         -dssl_path="${SSL_PATH}"
         -dqt_suffix="$<$<CONFIG:Debug>:d>"
-        -djson=${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.json
-        -djsonfirefox=${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.firefox.json
+        -djson=${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.batch.json
+        -djsonfirefox=${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.batch.firefox.json
         -dFIREFOX_URL="${FIREFOX_URL}"
         -dFIREFOX_UUID="${FIREFOX_UUID}"
         -dapp_path=$<TARGET_FILE:web-eid>
@@ -85,11 +88,11 @@ elseif(APPLE)
     set_target_properties(web-eid PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/MacOSXBundleInfo.plist.in)
     configure_file(${CMAKE_SOURCE_DIR}/install/macos-postinstall.in root_firefox_scripts/postinstall @ONLY)
     install(TARGETS web-eid DESTINATION /Applications/Utilities COMPONENT main)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.json COMPONENT chrome
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.batch.json COMPONENT chrome
         DESTINATION "/Library/Google/Chrome/NativeMessagingHosts")
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.firefox.json COMPONENT firefox
-        DESTINATION "/Library/Application Support/Mozilla/NativeMessagingHosts" RENAME eu.webeid.json)
-    install(FILES ${CMAKE_SOURCE_DIR}/install/ncibgoaomkmdpilpocfeponihegamlic.json COMPONENT chrome
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.batch.firefox.json COMPONENT firefox
+        DESTINATION "/Library/Application Support/Mozilla/NativeMessagingHosts" RENAME eu.webeid.batch.json)
+    install(FILES ${CMAKE_SOURCE_DIR}/install/adgngflncndhggolkdfiggnbhpdenfhg.json COMPONENT chrome
         DESTINATION "/Library/Application Support/Google/Chrome/External Extensions")
     add_custom_target(macdeployqt DEPENDS web-eid
         COMMAND ${_qt5Core_install_prefix}/bin/macdeployqt $<TARGET_BUNDLE_DIR:web-eid>
@@ -171,11 +174,11 @@ else()
     else()
         set(MOZILLA_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib/mozilla/native-messaging-hosts")
     endif()
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.json
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.batch.json
         DESTINATION ${CMAKE_INSTALL_DATADIR}/web-eid)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.firefox.json
-        DESTINATION "${MOZILLA_INSTALL_DIR}" RENAME eu.webeid.json)
-    install(FILES ${CMAKE_SOURCE_DIR}/install/ncibgoaomkmdpilpocfeponihegamlic.json
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/eu.webeid.batch.firefox.json
+        DESTINATION "${MOZILLA_INSTALL_DIR}" RENAME eu.webeid.batch.json)
+    install(FILES ${CMAKE_SOURCE_DIR}/install/adgngflncndhggolkdfiggnbhpdenfhg.json
         DESTINATION "${CMAKE_INSTALL_FULL_DATADIR}/google-chrome/extensions")
     install(FILES ${CMAKE_SOURCE_DIR}/install/web-eid.desktop
         DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
@@ -192,5 +195,5 @@ else()
         COMMAND dpkg-buildpackage -us -uc
     )
 endif()
-configure_file(${CMAKE_SOURCE_DIR}/install/eu.webeid.json.cmake eu.webeid.json @ONLY)
-configure_file(${CMAKE_SOURCE_DIR}/install/eu.webeid.firefox.json.cmake eu.webeid.firefox.json @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/install/eu.webeid.batch.json.cmake eu.webeid.batch.json @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/install/eu.webeid.batch.firefox.json.cmake eu.webeid.batch.firefox.json @ONLY)

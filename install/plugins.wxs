@@ -1,9 +1,9 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
     xmlns:bal="http://schemas.microsoft.com/wix/BalExtension"
     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
-  <Bundle Name="Web eID software" Version="$(var.MSI_VERSION)" Manufacturer="RIA"
-      UpgradeCode="a9bdddb0-cdb3-11eb-b8bc-0242ac130003"
-      Copyright="RIA" IconSourceFile="$(var.path)\appicon.ico" AboutUrl="http://www.id.ee"
+  <Bundle Name="HIA batch signing" Version="$(var.MSI_VERSION)" Manufacturer="RIA,HIA"
+      UpgradeCode="a9bdddb0-cdb3-11eb-b8bc-0242ac130004"
+      Copyright="HIA,RIA" IconSourceFile="$(var.path)\appicon.ico" AboutUrl="http://www.id.ee"
       Condition="(VersionNT >= v6.1)">
     <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.HyperlinkSidebarLicense">
       <bal:WixStandardBootstrapperApplication
@@ -21,28 +21,26 @@
     <Variable Name="ForceChromeExtensionActivation" Persisted="yes" bal:Overridable="yes" Type="numeric" Value="0"/>
     <Variable Name="ForceEdgeExtensionActivation" Persisted="yes" bal:Overridable="yes" Type="numeric" Value="0"/>
 
-    <util:ProductSearch Id="WebEIDInstalled" UpgradeCode="4f0e0fef-0dbc-481b-9d81-08921740f781"
+    <util:ProductSearch Id="WebEIDInstalled" UpgradeCode="4f0e0fef-0dbc-481b-9d81-08921740f782"
       Result="version" Variable="Installed"/>
     <util:RegistrySearch Variable="ChromeSupport" Condition="Installed" Result="exists" Root="HKLM"
-      Key="SOFTWARE\Google\Chrome\Extensions\ncibgoaomkmdpilpocfeponihegamlic" Value="update_url"/>
-    <util:RegistrySearch Variable="EdgeSupport" Condition="Installed" Result="exists" Root="HKLM"
-      Key="SOFTWARE\Microsoft\Edge\Extensions\gnmckgbandlkacikdndelhfghdejfido" Value="update_url"/>
+      Key="SOFTWARE\Google\Chrome\Extensions\adgngflncndhggolkdfiggnbhpdenfhg" Value="update_url"/>
     <util:RegistrySearch Variable="FirefoxSupport" Condition="Installed" Result="exists" Root="HKLM"
-      Key="SOFTWARE\Mozilla\NativeMessagingHosts\eu.webeid" Win64="yes"/>
+      Key="SOFTWARE\Mozilla\NativeMessagingHosts\eu.webeid.batch" Win64="yes"/>
 
     <Chain>
-      <MsiPackage Id="WebEID.X86" InstallCondition="NOT VersionNT64" ForcePerMachine="yes"
+      <MsiPackage Id="WebEID-batch.X86" InstallCondition="NOT VersionNT64" ForcePerMachine="yes"
           SourceFile="$(var.webeid).x86.qt.msi" Compressed="yes">
-        <MsiProperty Name="APPLICATIONFOLDER" Value="[ProgramFilesFolder]Web eID"/>
+        <MsiProperty Name="APPLICATIONFOLDER" Value="[ProgramFilesFolder]HIA batch signing"/>
         <MsiProperty Name="CHROMEINSTALL" Value="[ChromeSupport]"/>
         <MsiProperty Name="CHROMEPOLICY" Value="[ForceChromeExtensionActivation]"/>
         <MsiProperty Name="EDGEINSTALL" Value="[EdgeSupport]"/>
         <MsiProperty Name="EDGEPOLICY" Value="[ForceEdgeExtensionActivation]"/>
         <MsiProperty Name="FIREFOXINSTALL" Value="[FirefoxSupport]"/>
       </MsiPackage>
-      <MsiPackage Id="WebEID.X64" InstallCondition="VersionNT64" ForcePerMachine="yes"
+      <MsiPackage Id="WebEID-batch.X64" InstallCondition="VersionNT64" ForcePerMachine="yes"
           SourceFile="$(var.webeid).x64.qt.msi" Compressed="yes">
-        <MsiProperty Name="APPLICATIONFOLDER" Value="[ProgramFiles64Folder]Web eID"/>
+        <MsiProperty Name="APPLICATIONFOLDER" Value="[ProgramFiles64Folder]HIA batch signing"/>
         <MsiProperty Name="CHROMEINSTALL" Value="[ChromeSupport]"/>
         <MsiProperty Name="CHROMEPOLICY" Value="[ForceChromeExtensionActivation]"/>
         <MsiProperty Name="EDGEINSTALL" Value="[EdgeSupport]"/>

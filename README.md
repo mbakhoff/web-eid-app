@@ -217,6 +217,7 @@ https://github.com/mrts/docker-qt-cmake-gtest-valgrind-ubuntu/blob/master/Docker
 
       git clone https://github.com/microsoft/vcpkg.git C:\vcpkg
       cd C:\vcpkg
+      git checkout a69b65229b
       .\bootstrap-vcpkg.bat
       .\vcpkg integrate install
 
@@ -253,7 +254,7 @@ https://github.com/mrts/docker-qt-cmake-gtest-valgrind-ubuntu/blob/master/Docker
 
 ### Building and testing in Windows
 
-Use _Powershell_ to run the following commands to build the project.
+Use _VS Developer Powershell_ to run the following commands to build the project.
 
 - Set the _Qt_ installation directory variable:
 

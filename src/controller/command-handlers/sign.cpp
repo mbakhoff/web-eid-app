@@ -100,15 +100,21 @@ QVariantMap Sign::onConfirm(WebEidUI* window, const CardCertificateAndPinInfo& c
     auto pin = getPin(cardCertAndPin.cardInfo->eid().smartcard(), window);
 
     try {
-        const auto signature = signHash(cardCertAndPin.cardInfo->eid(), pin, docHash, hashAlgo);
+        QVariantList signatures;
+        QVariant signatureAlgorithm;
+        for (const auto& hash : docHash) {
+            const auto signature = signHash(cardCertAndPin.cardInfo->eid(), pin, hash, hashAlgo);
+            signatures.append(signature.first);
+            signatureAlgorithm = signature.second;
+        }
 
         // Erase PIN memory.
         // TODO: Use a scope guard. Verify that the buffers are actually zeroed
         // and no copies remain.
         std::fill(pin.begin(), pin.end(), '\0');
 
-        return {{QStringLiteral("signature"), signature.first},
-                {QStringLiteral("signatureAlgorithm"), signature.second}};
+        return {{QStringLiteral("signature"), signatures},
+                {QStringLiteral("signatureAlgorithm"), signatureAlgorithm}};
 
     } catch (const VerifyPinFailed& failure) {
         switch (failure.status()) {
@@ -135,8 +141,16 @@ void Sign::connectSignals(const WebEidUI* window)
 
 void Sign::validateAndStoreDocHashAndHashAlgo(const QVariantMap& args)
 {
-    docHash =
-        QByteArray::fromBase64(validateAndGetArgument<QByteArray>(QStringLiteral("hash"), args));
+    if (!args.contains(QStringLiteral("hash"))) {
+        THROW(CommandHandlerInputDataError, "hash property missing");
+    }
+    const auto &hashes = args[QStringLiteral("hash")].value<QVariantList>();
+    if (hashes.length() == 0) {
+        THROW(CommandHandlerInputDataError, "hash property empty");
+    }
+    for (const auto &hash : hashes) {
+        docHash.append(QByteArray::fromBase64(hash.value<QByteArray>()));
+    }
 
     QString hashAlgoInput = validateAndGetArgument<QString>(QStringLiteral("hashFunction"), args);
     if (hashAlgoInput.size() > 8) {
@@ -144,9 +158,11 @@ void Sign::validateAndStoreDocHashAndHashAlgo(const QVariantMap& args)
     }
     hashAlgo = HashAlgorithm(hashAlgoInput.toStdString());
 
-    if (docHash.length() != int(hashAlgo.hashByteLength())) {
-        THROW(CommandHandlerInputDataError,
-              std::string(hashAlgo) + " hash must be " + std::to_string(hashAlgo.hashByteLength())
-                  + " bytes long, but is " + std::to_string(docHash.length()) + " instead");
+    for (const auto &hash : docHash) {
+        if (hash.length() != int(hashAlgo.hashByteLength())) {
+            THROW(CommandHandlerInputDataError,
+                  std::string(hashAlgo) + " hash must be " + std::to_string(hashAlgo.hashByteLength())
+                                        + " bytes long, but is " + std::to_string(hash.length()) + " instead");
+        }
     }
 }
