@@ -76,10 +76,10 @@ CommandWithArgumentsPtr readCommandFromStdin()
                                     + std::to_string(messageLength) + ", at least 5 required");
     }
 
-    if (messageLength > 8192) {
+    if (messageLength > 1048576) {
         throw std::invalid_argument("readCommandFromStdin: Message length "
                                     + std::to_string(messageLength)
-                                    + " exceeds maximum allowed length 8192");
+                                    + " exceeds maximum allowed length 1048576");
     }
 
     auto message = QByteArray(int(messageLength), '\0');
